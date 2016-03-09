@@ -10,7 +10,7 @@ from sqlalchemy.exc import NoSuchTableError, IntegrityError, OperationalError
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm.exc import NoResultFound, UnmappedInstanceError
 
-import obspy.geodetics as geod
+#import obspy.geodetics as geod
 from obspy.core import AttribDict
 from obspy.taup import taup
 
@@ -423,9 +423,7 @@ def travel_times(ref, deg=None, km=None, depth=0.):
         if isinstance(iref, str):
             # phase time requested
             if not tt:
-                if not deg:
-                    deg = geod.kilometers2degrees(km)
-                tt = taup.getTravelTimes(deg, depth, model='ak135')
+		tt
             try:
                 idx = [ph['phase_name'] for ph in tt].index(iref)
                 itt = [ph['time'] for ph in tt][idx]

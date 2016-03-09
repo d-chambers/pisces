@@ -12,8 +12,8 @@ from obspy.core import read
 
 # C libraries 
 ext, = sysconfig.get_config_vars('SO')
-libecomp = C.CDLL(os.path.dirname(__file__) + '/lib/libecompression' + ext)
-libconvert = C.CDLL(os.path.dirname(__file__) + '/lib/libconvert' + ext)
+libecomp = None  #C.CDLL(os.path.dirname(__file__) + '/lib/libecompression' + ext)
+libconvert = None  #C.CDLL(os.path.dirname(__file__) + '/lib/libconvert' + ext)
 
 # TODO: implement other datatypes 
 
@@ -131,7 +131,7 @@ def e_compression(DATAFILE, BYTEOFFSET, NUM):
     #int32_t
     #e_decomp(uint32_t *in, int32_t *out, int32_t insamp, int32_t inbyte,
     #  int32_t out0, int32_t outsamp)
-    libecomp.e_decomp.restype = C.c_int 
+    libecomp.e_decomp.restype = None #C.c_int 
 
     #open file, query size, jump to offset
     f = open(DATAFILE, 'rb')

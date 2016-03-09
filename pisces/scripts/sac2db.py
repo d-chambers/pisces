@@ -12,7 +12,9 @@ import sqlalchemy.exc as exc
 import sqlalchemy.orm.exc as oexc
 
 from obspy import read
-from obspy.io.sac.core import _is_sac
+from IPython import embed
+#embed()
+from obspy.sac.core import _isSAC
 
 import pisces as ps
 from pisces.util import get_lastids, url_connect
@@ -197,7 +199,8 @@ def get_files(options):
     to use normal shell expansion).
 
     """
-    if len(options.files) == 1 and not _is_sac(options.files[0]):
+    '''
+    if len(options.files) == 1:
         #make a generator of non-blank lines
         try:
             listfile = open(options.files[0], 'r')
@@ -206,8 +209,10 @@ def get_files(options):
             msg = "{0} does not exist.".format(options.files[0])
             raise IOError(msg)
     else:
-        files = options.files
-
+    '''
+    files = options.files
+    from glob import glob
+    files=glob(options.files[0])
     return files
 
 
@@ -348,6 +353,7 @@ def main(argv=None):
     last = get_lastids(session, tables['lastid'], lastids, create=True)
 
     # for item in iterable:
+
     for sacfile in files:
         print sacfile
 

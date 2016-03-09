@@ -6,14 +6,14 @@ Converts a SAC header dictionary into a list of table dictionaries and vice-vers
 
 """
 # XXX: currently not working
-# TODO: 
+# TODO:
 #   - remove functions already in pisces.io.trace
 #   - make everything just translate dictionaries, not classes and make
 #     everything less obspy.Trace-centric
 #   - change db.flatfile.KBTABLEDICT to use pisces.schema.util.get_infovals
 #   - use pysac (hopefully obspy.io.sac, eventually)
 #   - make a bunch of column/header translation functions, like "kcmpnm_to_chan"
-#     and "chan_to_kcmpnm", and use them in higher-level functions, like 
+#     and "chan_to_kcmpnm", and use them in higher-level functions, like
 #     "sachdr_to_wfdisc" and "wfdisc_to_sachdr".
 
 import sys
@@ -22,7 +22,7 @@ from collections import OrderedDict
 import functools
 
 from obspy.core import UTCDateTime, AttribDict
-import obspy.geodetics as geod
+#import obspy.geodetics as geod
 
 import pisces.tables.kbcore as kb
 from pisces.io.readwaveform import read_waveform
@@ -212,7 +212,7 @@ ENUM_NAMES = {1: 'itime', 2: 'irlim', 3: 'iamph', 4: 'ixy', 5: 'iunkn',
               79: 'ieq2', 80: 'ime', 81: 'iex', 82: 'inu', 83: 'inc', 84: 'io_',
               85: 'il', 86: 'ir', 87: 'it', 88: 'iu', 89: 'ieq3', 90: 'ieq0',
               91: 'iex0', 92: 'iqc', 93: 'iqb0', 94: 'igey', 95: 'ilit',
-              96: 'imet', 97: 'iodor', 103: 'ios'} 
+              96: 'imet', 97: 'iodor', 103: 'ios'}
 
 # ievtyp -> etype
 ETYPEDICT = {37: 'en', 38: 'ex', 39: 'ex', 40: 'qt', 41: 'qt', 42: 'qt',
@@ -342,9 +342,10 @@ def sachdr2site(header):
 
     sitedict = _cast_float(sitedict, ['lat', 'lon', 'elev'])
     sitedict = _clean_str(sitedict, ['sta'])
-
-    sitedict['sta'] = sitedict['sta'].strip()[:6]
-
+    try:
+        sitedict['sta'] = sitedict['sta'].strip()[:6]
+    except:
+        sitedict['sta'] =''
     return [sitedict] or []
 
 
@@ -372,8 +373,10 @@ def sachdr2sitechan(header):
 
     sitechandict = _cast_float(sitechandict, ['hang', 'vang', 'edepth'])
     sitechandict = _clean_str(sitechandict, ['sta', 'chan'])
-    sitechandict['sta'] = sitechandict['sta'].strip()[:6]
-
+    try:
+        sitechandict['sta'] = sitechandict['sta'].strip()[:6]
+    except:
+        sitechandict['sta'] =''
     return [sitechandict] or []
 
 def sachdr2affiliation(header):
@@ -577,13 +580,7 @@ def sachdr2assoc(header, pickmap=None):
     #overwrite if any are None
     if not assocdict:
         try:
-            delta = geod.locations2degrees(header['stla'], header['stlo'],
-                                           header['evla'], header['evlo'])
-            m, seaz, esaz = geod.gps2DistAzimuth(header['stla'], header['stlo'],
-                                                 header['evla'], header['evlo'])
-            assocdict['esaz'] = esaz
-            assocdict['seaz'] = seaz
-            assocdict['delta'] = delta
+	    pass
         except (ValueError, TypeError):
             #some sac header values are None
             pass
@@ -682,9 +679,9 @@ def sachdr2wfdisc(header):
     wfdict['time'] = starttime.timestamp
     wfdict['endtime'] = endtime.timestamp
     wfdict['jdate'] = int(starttime.strftime('%Y%j'))
-    
+
     wfdict['samprate'] = int(round(1.0 / header['delta']))
-    
+
     kstnm = header.get('kstnm', None)
     if kstnm not in (SACDEFAULT['kstnm'], None):
         wfdict['sta'] = kstnm.strip()[:6]

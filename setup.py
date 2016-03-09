@@ -28,8 +28,8 @@ setup(name='pisces-db',
     keywords = ['seismology', 'geophysics', 'database'],
     install_requires=['numpy','obspy>=0.8','sqlalchemy>=0.9','Click'],
     ext_package='pisces.io.lib',
-    ext_modules=[Extension('libecompression', ['pisces/io/src/e_compression/e_compression.c']),
-                 Extension('libconvert',glob.glob('pisces/io/src/convert/*.c'))],
+    ext_modules=[
+                 ],
     entry_points = """
         [console_scripts]
         pisces=pisces.commands.main:cli
