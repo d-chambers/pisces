@@ -412,7 +412,9 @@ def main(argv=None):
                     # no such table, or database is locked
                     session.rollback()
                     print("rollback {}".format(table))
-
-
+                except exc.ProgrammingError as e:
+                    # duplicate or nonexistant primary keys
+                    session.rollback()
+                    print("rollback {}".format(table))
 if __name__ == '__main__':
     main(sys.argv[1:])

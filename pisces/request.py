@@ -9,7 +9,7 @@ import math
 import numpy as np
 from sqlalchemy import func, or_
 from obspy.core import UTCDateTime, Stream
-import obspy.geodetics as geod
+#import obspy.geodetics as geod
 
 from pisces.util import db_connect, make_same_size
 from pisces.io.trace import wfdisc2trace
@@ -105,8 +105,11 @@ def distaz_query(records, deg=None, km=None, swath=None):
     mask0 = np.ones(len(records), dtype=np.bool)
 
     if deg:
+	'''
         dgen = (geod.locations2degrees(irec.lat, irec.lon, deg[0], deg[1]) \
                 for irec in records)
+	'''
+	dgen=None
         degrees = np.fromiter(dgen, dtype=float)
         if deg[2] is not None:
             mask0 = np.logical_and(mask0, deg[2] <= degrees)
@@ -117,8 +120,11 @@ def distaz_query(records, deg=None, km=None, swath=None):
 
     if km:
         #???: this may be backwards
+	'''
         mgen = (geod.gps2DistAzimuth(irec.lat, irec.lon, km[0], km[1])[0] \
                   for irec in records)
+	'''
+	mgen=None
         kilometers = np.fromiter(mgen, dtype=float)/1e3
         #meters, azs, bazs = zip(*valgen)
         #kilometers = np.array(meters)/1e3
@@ -133,9 +139,12 @@ def distaz_query(records, deg=None, km=None, swath=None):
         minaz = swath[2] - swath[3]
         maxaz = swath[2] + swath[3]
         #???: this may be backwards
+	'''
         azgen = (geod.gps2DistAzimuth(irec.lat, irec.lon, km[0], km[1])[1] \
                  for irec in records)
-        azimuths = np.fromiter(azgen, dtype=float)
+        '''
+	azgen=None
+	azimuths = np.fromiter(azgen, dtype=float)
         mask0 = np.logical_and(mask0, azimuths >= minaz)
         mask0 = np.logical_and(mask0, azimuths <= maxaz)
 
